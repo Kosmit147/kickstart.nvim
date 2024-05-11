@@ -104,6 +104,15 @@ vim.opt.number = true
 --  Experiment for yourself to see if you like it!
 vim.opt.relativenumber = true
 
+vim.opt.colorcolumn = '110'
+vim.api.nvim_create_autocmd('ColorScheme', {
+  pattern = '*',
+  desc = 'Set ColorColumn color',
+  callback = function()
+    vim.api.nvim_set_hl(0, 'ColorColumn', { bg = '#181923' })
+  end,
+})
+
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
 
@@ -650,8 +659,7 @@ require('lazy').setup({
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        -- NOTE: local disable_filetypes = { c = true, cpp = true }
-        local disable_filetypes = {}
+        local disable_filetypes = { c = true, cpp = true }
         return {
           timeout_ms = 500,
           lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
