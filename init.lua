@@ -887,6 +887,71 @@ require('lazy').setup({
     end,
   },
 
+  {
+    'mfussenegger/nvim-dap',
+    dependencies = {
+      'rcarriga/nvim-dap-ui',
+      'theHamsta/nvim-dap-virtual-text',
+      'nvim-neotest/nvim-nio',
+      'williamboman/mason.nvim',
+    },
+    config = function()
+      local dap = require 'dap'
+      local ui = require 'dapui'
+
+      require('dapui').setup()
+      require('nvim-dap-virtual-text').setup {}
+
+      local gdb_executable = vim.fn.exepath 'gdb'
+      if gdb_executable ~= '' then
+        dap.adapters.gdb = {
+          type = 'executable',
+          command = gdb_executable,
+          args = { '-i', 'dap' },
+        }
+
+        dap.configurations.c = {
+          {
+            name = 'Launch',
+            type = 'gdb',
+            request = 'launch',
+            program = function()
+              return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+            end,
+            cwd = '${workspaceFolder}',
+            stopAtBeginningOfMainSubprogram = false,
+            projectDir = '${workspaceFolder}',
+          },
+        }
+      end
+
+      vim.keymap.set('n', '<space>b', dap.toggle_breakpoint)
+      vim.keymap.set('n', '<space>gb', dap.run_to_cursor)
+
+      -- Eval var under cursor
+      vim.keymap.set('n', '<space>?', function()
+        require('dapui').eval(nil, { enter = true })
+      end)
+
+      vim.keymap.set('n', '<F5>', dap.continue)
+      vim.keymap.set('n', '<F10>', dap.step_over)
+      vim.keymap.set('n', '<F11>', dap.step_into)
+
+      dap.listeners.before.attach.dapui_config = function()
+        ui.open()
+      end
+      dap.listeners.before.launch.dapui_config = function()
+        ui.open()
+      end
+      dap.listeners.before.event_terminated.dapui_config = function()
+        ui.close()
+      end
+      dap.listeners.before.event_exited.dapui_config = function()
+        ui.close()
+      end
+    end,
+  },
+
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
