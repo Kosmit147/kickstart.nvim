@@ -933,6 +933,8 @@ require('lazy').setup({
         require('dapui').eval(nil, { enter = true })
       end)
 
+      vim.keymap.set('n', '<F1>', dap.terminate)
+      vim.keymap.set('n', '<F2>', dap.restart)
       vim.keymap.set('n', '<F5>', dap.continue)
       vim.keymap.set('n', '<F10>', dap.step_over)
       vim.keymap.set('n', '<F11>', dap.step_into)
