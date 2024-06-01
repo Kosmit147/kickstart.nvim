@@ -923,6 +923,20 @@ require('lazy').setup({
             projectDir = '${workspaceFolder}',
           },
         }
+
+        dap.configurations.cpp = {
+          {
+            name = 'Launch',
+            type = 'gdb',
+            request = 'launch',
+            program = function()
+              return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+            end,
+            cwd = '${workspaceFolder}',
+            stopAtBeginningOfMainSubprogram = false,
+            projectDir = '${workspaceFolder}',
+          },
+        }
       end
 
       vim.keymap.set('n', '<space>b', dap.toggle_breakpoint)
